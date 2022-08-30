@@ -1,0 +1,1 @@
+# Godaddy-auto-domain-name-search
