@@ -49,24 +49,26 @@ for url in input_df[0]:
     time.sleep(5)
     action.click(driver.find_element(By.XPATH, "//button[@type = 'Submit']"))
     action.perform()
-    time.sleep(5)
+    time.sleep(10)
+
     try:
-        # Domain Taken
-        driver.find_element(By.XPATH,"//span[contains(text(),'Domain Taken')]")
-        data = [driver.find_element(By.XPATH, "//*[@id='search-app']/div/div/div/div[2]/div[2]/div[1]/div[2]/div[2]/h2/span").text, "Taken", "", ""]
-    except NoSuchElementException:
-        try:
-            # Available Domain
-            time.sleep(3)
-            driver.find_element(By.XPATH,"//*[@id='exact-match']/div/div/div[2]/div/div[1]/span")
-            data = [url, driver.find_element(By.XPATH, "//*[@id='exact-match']/div/div/div[3]/div/div/div/div/div/div[2]/button").text,
-            driver.find_element(By.XPATH, "//*[@id='exact-match']/div/div/div[2]/div/div[2]/div/div/span[1]").text, ""]
+        driver.find_element(By.XPATH,"//span[contains(text(), 'is available')]")
+        price = driver.find_element(By.XPATH,"//span[@data-cy='exact-match-price-main']").text
+        try: 
+            button = driver.find_element(By.XPATH,"//button[@data-cy='exact-match-add-to-cart-button']")
         except NoSuchElementException:
-            data = [url, "Taken", "", ""]
+            try: 
+                button = driver.find_element(By.XPATH,"//button[@data-cy='exact-match-make-offer-button']")
+            except NoSuchElementException:
+                pass
+        data = [url, button.text, price, ""]
+    except NoSuchElementException:
+        data = [url, "Taken", "", ""]
+
     output_df.loc[len(output_df)] = data 
     print(output_df)
     driver.back()
     time.sleep(5)
 
-    
+print(output_df)  
 output_df.to_csv("Godaddy-auto-domain-name-search\src\output.csv")
